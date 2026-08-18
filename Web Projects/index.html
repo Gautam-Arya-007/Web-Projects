@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EcoSync - Open Sustainable Ideas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #2a3ae9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: #7d2e4c;
+            color: rgb(229, 225, 19);
+            padding: 15px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #2e7d32;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+
+
+            
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        .idea-card {
+            background: white;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+
+        .like-btn {
+            background: #4caf50;
+            margin-top: 10px;
+        }
+
+        .delete-btn {
+            background: #c62828;
+            margin-left: 5px;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 10px;
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌱 EcoSync</h1>
+    <p>Open Source Platform for Sustainable Ideas</p>
+</header>
+
+<div class="container">
+
+    <h2>Share Your Idea</h2>
+
+    <input type="text" id="title" placeholder="Idea Title">
+    <input type="text" id="author" placeholder="Your Name">
+    <textarea id="description" placeholder="Describe your sustainable idea..."></textarea>
+    <button onclick="addIdea()">Post Idea</button>
+
+    <h2>Community Ideas</h2>
+    <div id="ideas"></div>
+
+</div>
+
+<footer>
+    © 2026 EcoSync | Built for Sustainable Future 🌍
+</footer>
+
+<script>
+    let ideas = JSON.parse(localStorage.getItem("ideas")) || [];
+
+    function saveIdeas() {
+        localStorage.setItem("ideas", JSON.stringify(ideas));
+    }
+
+    function addIdea() {
+        const title = document.getElementById("title").value;
+        const author = document.getElementById("author").value;
+        const description = document.getElementById("description").value;
+
+        if (!title || !author || !description) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        const newIdea = {
+            id: Date.now(),
+            title,
+            author,
+            description,
+            likes: 0
+        };
+
+        ideas.unshift(newIdea);
+        saveIdeas();
+        displayIdeas();
+
+        document.getElementById("title").value = "";
+        document.getElementById("author").value = "";
+        document.getElementById("description").value = "";
+    }
+
+    function likeIdea(id) {
+        ideas = ideas.map(idea => {
+            if (idea.id === id) idea.likes++;
+            return idea;
+        });
+        saveIdeas();
+        displayIdeas();
+    }
+
+    function deleteIdea(id) {
+        ideas = ideas.filter(idea => idea.id !== id);
+        saveIdeas();
+        displayIdeas();
+    }
+
+    function displayIdeas() {
+        const ideasDiv = document.getElementById("ideas");
+        ideasDiv.innerHTML = "";
+
+        ideas.forEach(idea => {
+            ideasDiv.innerHTML += `
+                <div class="idea-card">
+                    <h3>${idea.title}</h3>
+                    <p>${idea.description}</p>
+                    <small>By ${idea.author}</small><br>
+                    <button class="like-btn" onclick="likeIdea(${idea.id})">
+                        ❤️ ${idea.likes}
+                    </button>
+                    <button class="delete-btn" onclick="deleteIdea(${idea.id})">
+                        Delete
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    displayIdeas();
+</script>
+
+</body>
+</html>
